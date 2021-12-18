@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-	<title>Hash Map Demo</title>
+	<title>Dumb Hash Map Demo</title>
 	<style>
 		#hash {
 			width: 100%;
@@ -14,12 +14,12 @@
 </head>
 <body>
 	<script>
-		function HashMap(hash) {
+		function DumbHashMap(hash) {
 			this.map = [];
 			this.hash = hash || (x => x % 1000);
 		}
 
-		HashMap.prototype.insert = function(key, value) {
+		DumbHashMap.prototype.insert = function(key, value) {
 			let hash = this.hash(key);
 
 			if(!this.map[hash]) {
@@ -36,7 +36,7 @@
 			}
 		}
 
-		HashMap.prototype.get = function(key) {
+		DumbHashMap.prototype.get = function(key) {
 			let hash = this.hash(key);
 			let index = this.map[hash].keys.indexOf(key);
 
@@ -46,7 +46,7 @@
 	</script>
 	<script>
 		var $ = document.querySelector.bind(document);
-		var map = new HashMap();
+		var map = new DumbHashMap();
 
 		document.addEventListener('DOMContentLoaded', () => {
 			$('#hash').value = '(key) => {\n\treturn key % 1000;\n}';
@@ -60,14 +60,14 @@
 
 			$('#insert_hash').addEventListener('click', () => {
 				let hash = $('#hash');
-				map = new HashMap(eval(hash.value));
+				map = new DumbHashMap(eval(hash.value));
 
 				$('#state').value = JSON.stringify(map.map).replaceAll('null,', '');
 			});
 		});
 	</script>
 
-	<h1>Hash Map Playground</h1>
+	<h1>Dumb Hash Map Playground</h1>
 	<textarea id="hash"></textarea>
 	<button id="insert_hash">New Map</button>
 
