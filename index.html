@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<head>
+	<title>Hash Map Demo</title>
+	<style>
+		#hash {
+			width: 100%;
+			height: 30vh;
+		}
+		#state {
+			width: 100%;
+			height: 50vh;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		function HashMap(hash) {
+			this.map = [];
+			this.hash = hash || (x => x % 1000);
+		}
+
+		HashMap.prototype.insert = function(key, value) {
+			let hash = this.hash(key);
+
+			if(!this.map[hash]) {
+				this.map[hash] = {'keys' : [key], 'values': [value]};
+			} else {
+				let index = this.map[hash].keys.indexOf(key);
+
+				if(index !== -1) {
+					this.map[hash].values[index] = value;
+				} else {
+					this.map[hash].keys.push(key);
+					this.map[hash].values.push(value);
+				}
+			}
+		}
+
+		HashMap.prototype.get = function(key) {
+			let hash = this.hash(key);
+			let index = this.map[hash].keys.indexOf(key);
+
+			if(index !== -1)
+				return this.map[hash].values[index];
+		}
+	</script>
+	<script>
+		var $ = document.querySelector.bind(document);
+		var map = new HashMap();
+
+		document.addEventListener('DOMContentLoaded', () => {
+			$('#hash').value = '(key) => {\n\treturn key % 1000;\n}';
+
+			$('#insert').addEventListener('click', () => {
+				let key = $('#key'), value = $('#value');
+				map.insert(key.value, value.value);
+
+				$('#state').value = JSON.stringify(map.map).replaceAll('null,', '');
+			});
+
+			$('#insert_hash').addEventListener('click', () => {
+				let hash = $('#hash');
+				map = new HashMap(eval(hash.value));
+
+				$('#state').value = JSON.stringify(map.map).replaceAll('null,', '');
+			});
+		});
+	</script>
+
+	<h1>Hash Map Playground</h1>
+	<textarea id="hash"></textarea>
+	<button id="insert_hash">New Map</button>
+
+	<textarea id="state" disabled></textarea>
+	<label for="key">Key: </label>
+	<input id="key" type="text"/>
+	<label for="value">Value: </label>
+	<input id="value" type="text"/>
+	<button id="insert">Insert</button>
+</body>
