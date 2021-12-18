@@ -4,7 +4,7 @@
 	<style>
 		#hash {
 			width: 100%;
-			height: 30vh;
+			height: 20vh;
 		}
 		#state {
 			width: 100%;
@@ -55,14 +55,22 @@
 				let key = $('#key'), value = $('#value');
 				map.insert(key.value, value.value);
 
-				$('#state').value = JSON.stringify(map.map).replaceAll('null,', '');
+				let state = $('#state');
+
+				state.value = '';
+				for(const [i, v] of map.map.entries())
+					state.value += `${i}: ${v ? v.values : '<empty>'}\n`;
 			});
 
 			$('#insert_hash').addEventListener('click', () => {
 				let hash = $('#hash');
 				map = new DumbHashMap(eval(hash.value));
 
-				$('#state').value = JSON.stringify(map.map).replaceAll('null,', '');
+				let state = $('#state');
+
+				state.value = '';
+				for(const [i, v] of map.map.entries())
+					state.value += `${i}: ${v ? v.values : '<empty>'}\n`;
 			});
 		});
 	</script>
@@ -71,6 +79,7 @@
 	<textarea id="hash"></textarea>
 	<button id="insert_hash">New Map</button>
 
+	<h3>Hash Map State</h3>
 	<textarea id="state" disabled></textarea>
 	<label for="key">Key: </label>
 	<input id="key" type="text"/>
