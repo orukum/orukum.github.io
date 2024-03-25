@@ -38,4 +38,4 @@ jobs:
       - name: Deploy
         uses: actions/upload-pages-artifact@v3
         with:
-          path: $GITHUB_WORKSPACE/dist
+          path: dist
