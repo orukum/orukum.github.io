@@ -29,8 +29,9 @@ jobs:
       # Installs npm dependencies and builds the project
       - name: Build
         run: |
-          npm install,
+          npm ci,
           npm run build:prod
+        working-directory: $GITHUB_WORKSPACE
 
       # Deploys the project to GitHub Pages
       - name: Deploy
