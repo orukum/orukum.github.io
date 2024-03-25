@@ -29,7 +29,6 @@ jobs:
       # Installs npm dependencies and builds the project
       - name: Build
         run: |
-          cd $GITHUB_WORKSPACE,
           npm install,
           npm run build:prod
 
