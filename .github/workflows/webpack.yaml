@@ -45,7 +45,6 @@ jobs:
         run: |
           npm ci
           npm run build:prod
-          chmod -R 0744 dist
 
       # Uploads the archive to GitHub Pages
       - name: Upload
@@ -55,5 +54,4 @@ jobs:
       
       # Deploys the project to GitHub Pages
       - name: Deploy
-        id: deployment
         uses: actions/deploy-pages@v4
