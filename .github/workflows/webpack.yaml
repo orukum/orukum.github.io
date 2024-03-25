@@ -1,0 +1,59 @@
+# This is a workflow to build a webpack project and publish it to GitHub Pages
+name: orukum.github.io
+
+# Triggers the workflow on push or pull request events but only for the "master" branch
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows this workflow to run manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+# Builds the webpack project, gzips it, and deploys its to GitHub Pages
+jobs:
+  publish:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v4
+      
+      # Sets up node for use
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Installs npm dependencies and builds the project
+      - name: Build
+        run: |
+          npm ci
+          npm run build:prod
+          chmod -R 0744 dist
+
+      # Uploads the archive to GitHub Pages
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      
+      # Deploys the project to GitHub Pages
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
