@@ -31,7 +31,7 @@ jobs:
       # Installs npm dependencies and builds the project
       - name: Build
         run: |
-          npm ci,
+          npm ci
           npm run build:prod
 
       # Deploys the project to GitHub Pages
