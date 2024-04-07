@@ -27,7 +27,7 @@ export class SphericalBody extends Body {
       super(...arguments);
   
       this.radius = radius ?? 1;
-      this.mesh = new Mesh(new SphereGeometry(radius, 8, 8), new MeshToonMaterial({ color }));
+      this.mesh = new Mesh(new SphereGeometry(radius, 12, 12), new MeshToonMaterial({ color }));
     }
   
     toPhysicsObject() {

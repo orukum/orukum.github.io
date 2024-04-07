@@ -6,9 +6,6 @@ function applyGravity(a, b, pDiff, pDist) {
 
   a.velocity.add(pDiff.clone().multiplyScalar(b.mass * -scalar));
   b.velocity.add(pDiff.clone().multiplyScalar(a.mass * scalar));
-  
-  a.position.add(a.velocity);
-  b.position.add(b.velocity);
 }
 
 function applyCollision(a, b, pDiff, pDist) {
@@ -18,11 +15,11 @@ function applyCollision(a, b, pDiff, pDist) {
   b.position.add(pDiff.clone().multiplyScalar(-space));
 
   const vDiff = a.velocity.clone().sub(b.velocity),
-    scalar = vDiff.clone().dot(pDiff) / (pDist * pDist),
-    inverseMass = 0.90 / (a.mass + b.mass);
+    scalar = vDiff.dot(pDiff) / (pDist * pDist),
+    inverseMass = 0.8 / (a.mass + b.mass);
 
-  a.velocity.sub(pDiff.clone().multiplyScalar(scalar * (b.mass + b.mass) * inverseMass));
-  b.velocity.add(pDiff.clone().multiplyScalar(scalar * (a.mass + a.mass) * inverseMass));
+  a.velocity.sub(pDiff.clone().multiplyScalar(scalar * (b.mass + b.mass) * inverseMass)).multiplyScalar(0.999);
+  b.velocity.add(pDiff.clone().multiplyScalar(scalar * (a.mass + a.mass) * inverseMass)).multiplyScalar(0.999);
 }
 
 function applyPhysics(bodies) {
@@ -33,14 +30,13 @@ function applyPhysics(bodies) {
         pDiff = a.position.clone().sub(b.position),
         pDist = pDiff.length();
 
-      if (pDist > 1000)
-        continue;
-
       if (pDist > a.radius + b.radius)
         applyGravity(a, b, pDiff, pDist);
       else
         applyCollision(a, b, pDiff, pDist);
     }
+
+    bodies[i].position.add(bodies[i].velocity);
   }
 
   return bodies.map(({position}) => {
@@ -57,7 +53,8 @@ expose({
       radius,
       mass,
       position: new Vector3(...position),
-      velocity: new Vector3(...velocity)
+      velocity: new Vector3(...velocity),
+      others: []
     });
   },
   simulate: function() {

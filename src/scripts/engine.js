@@ -8,7 +8,6 @@ export default class Engine {
 
   //#region Private Methods
   #tick(bodies) {
-    console.log(bodies);
     for(let i = 0; i < bodies.length; i++) {
       this.#objects[i].position.set(...bodies[i].position);
     }
