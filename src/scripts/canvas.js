@@ -1,15 +1,16 @@
-import * as THREE from 'three';
+import { WebGLRenderer, PerspectiveCamera, Scene } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { AsciiEffect } from 'three/addons/effects/AsciiEffect.js';
 
 export default class Canvas {
   //#region Private Fields
-  #renderer;  // WebGLRenderer
-  #camera;    // PerspectiveCamera
-  #controls;  // OrbitControls
-  #scene;     // Scene
+  #animationFrameRequestId;
+  //#endregion
 
-  #animationFrameRequestId; // requestAnimationFrame Id
+  //#region Public Fields
+  renderer;  // WebGLRenderer
+  camera;    // PerspectiveCamera
+  controls;  // OrbitControls
+  scene;     // Scene
   //#endregion
 
   //#region Private Methods
@@ -22,65 +23,57 @@ export default class Canvas {
   }
 
   #render() {
-    this.#controls.update();
-    this.#renderer.render(this.#scene, this.#camera);
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
   }
 
   #resize() {
-    const canvas = this.#renderer.domElement,
-      currentWidth = canvas.width,
-      currentHeight = canvas.height,
-      expectedWidth = canvas.clientWidth,
-      expectedHeight = canvas.clientHeight;
+    const canvas = this.renderer.domElement,
+      [currentWidth, currentHeight] = [canvas.width, canvas.height],
+      [desiredWidth, desiredHeight] = [canvas.clientWidth, canvas.clientHeight];
 
-    if (currentWidth != expectedWidth || currentHeight !== expectedHeight) {
-      this.#renderer.setSize(expectedWidth, expectedHeight, false);
-      this.#camera.aspect = expectedWidth / expectedHeight;
-      this.#camera.updateProjectionMatrix();
+    if (currentWidth != desiredWidth || currentHeight !== desiredHeight) {
+      this.renderer.setSize(desiredWidth, desiredHeight, false);
+      this.camera.aspect = desiredWidth / desiredHeight;
+      this.camera.updateProjectionMatrix();
     }
   }
   //#endregion
 
   //#region Public Methods
   constructor(element = document.body) {
-    const width = element.clientWidth,
-      height = element.clientHeight;
-
     // Renderer
-    this.#renderer = new THREE.WebGLRenderer({
+    this.renderer = new WebGLRenderer({
       canvas: element
     });
 
     // Camera  
-    this.#camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    this.#camera.position.set(0, 0, 50);
+    this.camera = new PerspectiveCamera(75, 2, 0.1, 1000);
+    this.camera.position.set(0, 0, 150);
 
     // Controls
-    this.#controls = new OrbitControls(this.#camera, this.#renderer.domElement);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     // Scene
-    this.#scene = new THREE.Scene();      
+    this.scene = new Scene();      
   }
 
   add(mesh) {
-    this.#scene.add(mesh);
+    this.scene.add(mesh);
   }
 
-  startAnimation(autoRotate) {
-    if (this.#animationFrameRequestId)  // We are already animating
+  startAnimation() {
+    if (this.#animationFrameRequestId)  // We're already animating
       return;
-
-    this.#controls.autoRotate = autoRotate;
 
     this.#animate();
   }
 
   stopAnimation() {
-    if (!this.#animationFrameRequestId) // We are not animating
+    if (!this.#animationFrameRequestId) // We're not yet animating
       return;
-
-    cancelAnimationFrame(this.#animationFrameRequestId);
-    this.#animationFrameRequestId = null;
+    
+      this.#animationFrameRequestId = cancelAnimationFrame(this.#animationFrameRequestId);
   }
   //#endregion
 }

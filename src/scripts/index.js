@@ -1,5 +1,39 @@
 import 'styles/index.less';
-import * as THREE from 'three';
+import Canvas from './canvas';
+import Physics from './physics';
+import Engine from './engine';
+import { SphericalBody } from './bodies';
+import { PointLight, Vector3 } from 'three';
+
+const element = document.getElementById('canvas'),
+  canvas = new Canvas(element),
+  physics = new Physics(),
+  engine = new Engine(canvas, physics);
+
+const light = new PointLight(0xff0000, 500, 5000);
+  light.position.set(0, 0, 0);
+
+canvas.add(light);
+
+for(let i = 0; i < 1024; i++) {
+  const d = Math.random() * 64 + 4,
+    r = Math.random() * 2 * Math.PI,
+    t = Math.random() * 2 * Math.PI,
+    size = Math.random() * 1.5;
+
+  const sphere = new SphericalBody({
+    mass: size / 10000,
+    radius: size,
+    position: new Vector3(d * Math.sin(r) * Math.cos(t), d * Math.sin(r) * Math.sin(t), d * Math.cos(r)),
+    color: 0xffffff      
+  });
+  
+  engine.addSphere(sphere);
+}
+
+engine.start();
+
+/*import * as THREE from 'three';
 import Canvas from "./canvas";
 import { Engine, SphericalBody, Vector } from './physics';
 
@@ -16,7 +50,7 @@ const element = document.getElementById('canvas'),
   canvas = new Canvas(element),
   engine = new Engine();
 
-for(let i = 0; i < 64; i++) {
+for(let i = 0; i < 128; i++) {
   const d = Math.random() * 32 + 4,
     r = Math.random() * 2 * Math.PI,
     t = Math.random() * 2 * Math.PI,
@@ -41,3 +75,4 @@ canvas.add(core.mesh);
 
 engine.startSimulation(1000/30);
 canvas.startAnimation(false);
+setTimeout(() => engine.stopSimulation(), 1000);*/

@@ -39,6 +39,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "comlink": "^4.4.1",
     "three": "^0.162.0"
   }
 }
