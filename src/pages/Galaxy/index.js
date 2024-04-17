@@ -1,18 +1,20 @@
 import './index.less';
 import { PointLight, Vector3 } from 'three';
-import { onMount } from 'solid-js';
+import { onMount, onCleanup } from 'solid-js';
 import Canvas from './lib/canvas';
 import Physics from './lib/physics';
 import Engine from './lib/engine';
 import { SphericalBody } from './lib/bodies';
 
 export default function ()  {
-  let element;
+  let element,
+    engine;
 
   onMount(() => {
     const canvas = new Canvas(element),
-      physics = new Physics(),
-      engine = new Engine(canvas, physics);
+      physics = new Physics();
+    
+    engine = new Engine(canvas, physics);
 
     const light = new PointLight(0xff44aa, 500, 5000);
       light.position.set(0, 0, 0);  
@@ -43,6 +45,10 @@ export default function ()  {
     }
 
     engine.start();
+  });
+
+  onCleanup(() => {
+    engine.destroy();
   });
 
   return <canvas ref={element}></canvas>;

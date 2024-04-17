@@ -3,6 +3,7 @@ import { wrap } from 'comlink';
 export default class Physics {
     //#region Private Fields
     #worker;  // Web worker responsible for physics calculations
+    #link;  // Comlinked web worker
     #listeners; // The functions invoked when a simulation frame has completed
 
     #animationFrameRequestId; 
@@ -11,7 +12,7 @@ export default class Physics {
     //#region Private Methods
     #simulate() {
       this.#animationFrameRequestId = requestAnimationFrame(async () => {
-        this.#sendEvent(await this.#worker.simulate());
+        this.#sendEvent(await this.#link.simulate());
         this.#simulate();
       });
     }
@@ -24,7 +25,8 @@ export default class Physics {
   
     //#region Public Methods
     constructor() {
-      this.#worker = wrap(new Worker(new URL('./worker.js', import.meta.url)));
+      this.#worker = new Worker(new URL('./worker.js', import.meta.url));
+      this.#link = wrap(this.#worker);
       this.#listeners = new Set();
     }
 
@@ -37,7 +39,7 @@ export default class Physics {
     }
   
     add(body) {
-      this.#worker.add(body);
+      this.#link.add(body);
     }
   
     startSimulation(msDelay) {
@@ -53,6 +55,10 @@ export default class Physics {
       
       cancelAnimationFrame(this.#animationFrameRequestId);
       this.#animationFrameRequestId = null;
+    }
+
+    destroy() {
+      this.#worker.terminate();
     }
     //#endregion
 }

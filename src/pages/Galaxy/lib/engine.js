@@ -38,5 +38,9 @@ export default class Engine {
     this.#canvas.stopAnimation();
     this.#physics.stopSimulation();
   }
+
+  destroy() {
+    this.#physics.destroy();
+  }
   //#endregion
 }
