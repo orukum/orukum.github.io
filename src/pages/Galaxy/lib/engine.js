@@ -40,6 +40,7 @@ export default class Engine {
   }
 
   destroy() {
+    this.stop();
     this.#physics.destroy();
   }
   //#endregion
