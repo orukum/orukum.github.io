@@ -1,7 +1,7 @@
 import './index.less';
 import { lazy } from "solid-js";
 import { render } from "solid-js/web";
-import { Router, Route, A } from "@solidjs/router";
+import { HashRouter, Route, A } from "@solidjs/router";
 
 const App = props => (
   <>
@@ -14,8 +14,8 @@ const App = props => (
 );
 
 render(() => (
-  <Router root={App}>
-    <Route path="/" component={lazy(() => import('Pages/Home'))} />
-    <Route path="/galaxy" component={lazy(() => import('Pages/Galaxy'))} />
-  </Router>
+  <HashRouter root={App}>
+    <Route path='/' component={lazy(() => import('Pages/Home'))} />
+    <Route path={['/galaxy', '/galaxy/:num']} component={lazy(() => import('Pages/Galaxy'))} />
+  </HashRouter>
 ), document.getElementById('root'));

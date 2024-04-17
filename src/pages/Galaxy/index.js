@@ -5,8 +5,11 @@ import Canvas from './lib/canvas';
 import Physics from './lib/physics';
 import Engine from './lib/engine';
 import { SphericalBody } from './lib/bodies';
+import { useParams } from '@solidjs/router';
 
 export default function ()  {
+  const { num } = useParams();
+
   let element,
     engine;
 
@@ -21,14 +24,7 @@ export default function ()  {
 
     canvas.add(light);
 
-    engine.addSphere(new SphericalBody({
-      mass: 2,
-      radius: 0.5,
-      position: new Vector3(0,0,0),
-      color: 0x000000
-    }));
-
-    for(let i = 0; i < 768; i++) {
+    for(let i = 0; i < Math.min(num ?? 512, 1024); i++) {
       const d = Math.random() * 48 + 4,
         r = Math.random() * 2 * Math.PI,
         t = Math.random() * 2 * Math.PI,
