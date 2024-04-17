@@ -24,7 +24,7 @@ export default function ()  {
 
     canvas.add(light);
 
-    for(let i = 0; i < Math.min(num ?? 512, 1024); i++) {
+    for(let i = 0; i < Math.min(Number(num) || 512, 1024); i++) {
       const d = Math.random() * 48 + 4,
         r = Math.random() * 2 * Math.PI,
         t = Math.random() * 2 * Math.PI,
