@@ -38,6 +38,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@solidjs/meta": "^0.29.3",
     "@solidjs/router": "^0.13.2",
     "babel-preset-solid": "^1.8.16",
     "comlink": "^4.4.1",

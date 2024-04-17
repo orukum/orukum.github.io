@@ -1,26 +1,61 @@
 import './index.less';
 import { lazy } from "solid-js";
-import { render } from "solid-js/web";
+import { Dynamic, render } from "solid-js/web";
 import { HashRouter, Route, A } from "@solidjs/router";
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import { MetaProvider, Title } from '@solidjs/meta';
 
-const App = props => (
-  <>
+const pages = [
+  {
+    title: 'Home',
+    paths: ['/'],
+    component: Home    
+  },
+  {
+    title: 'Galaxy',
+    paths: ['/galaxy', '/galaxy/:num'],
+    component: lazy(() => import('Pages/Galaxy'))
+  },
+  {
+    title: 'Boids',
+    paths: ['/boids'],    
+    component: lazy(() => import('Pages/Boids'))
+  },
+  {
+    hidden: true,
+    title: 'Not Found',
+    paths: ['*path'],
+    component: NotFound
+  }
+];
+
+function App(props) {
+  return <>
     <nav class="main">
-      <A href="/">Home</A>
-      <A href="/galaxy">Galaxy Sim</A>
-      <A href="/boids">Boids</A>
+      <For each={pages}>
+        {({hidden, paths, title}) => (
+          <Show when={!hidden}>
+            <A href={paths[0]}>{title}</A>
+          </Show>
+        )}
+      </For>
     </nav>
     {props.children}
-  </>
-);
+  </>;
+}
+
+function Page({title, component}) {
+  return <MetaProvider>
+    <Title>{title}</Title>
+    <Dynamic component={component} />
+  </MetaProvider>;
+}
 
 render(() => (
   <HashRouter root={App}>
-    <Route path='/' component={Home} />
-    <Route path={['/galaxy', '/galaxy/:num']} component={lazy(() => import('Pages/Galaxy'))} />
-    <Route path='/boids' component={lazy(() => import('Pages/Boids'))} />
-    <Route path="*path" component={NotFound} />
+    <For each={pages}>
+      {({paths, component, title}) => <Route path={paths} component={() => <Page title={title} component={component} />}/>}
+    </For>
   </HashRouter>
 ), document.getElementById('root'));
