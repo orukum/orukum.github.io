@@ -9,11 +9,10 @@ const stylesHandler = isProduction
   : 'style-loader';
 
 const config = {
-  entry: './src/scripts/index.js',
+  entry: './src/index.js',
   resolve: {
     alias: {
-      scripts:path.resolve(__dirname, '/src/scripts/'), 
-      styles: path.resolve(__dirname, '/src/styles/'),
+      Pages: path.resolve(__dirname, '/src/pages/')
     },
   },
   output: {
