@@ -15,6 +15,7 @@ const App = props => (
 
 render(() => (
   <Router root={App}>
+    <Route path="/" component={lazy(() => import('Pages/Home'))} />
     <Route path="/galaxy" component={lazy(() => import('Pages/Galaxy'))} />
   </Router>
 ), document.getElementById('root'));
