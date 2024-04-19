@@ -1,16 +1,17 @@
 import { expose } from 'comlink';
 
-let visualRageSquared = 10000,
-  visualRange = 100,
-  protectedRangeSquared = 400,
+let visualRange = 200,
+  visualRageSquared = visualRange * visualRange,
+  protectedRange = 10,
+  protectedRangeSquared = protectedRange * protectedRange,
   minSpeed = 2,
   maxSpeed = 4,
   avoidFactor = 0.05,
   matchingFactor = 0.05,
-  centeringFactor = 0.0005,
+  centeringFactor = 0.00025,
   turningFactor = 0.1,
-  maxX = 100,
-  maxY = 100,
+  maxX = 0,
+  maxY = 0,
   boids = [];
 
 expose({
@@ -27,57 +28,57 @@ expose({
   next: function() {
     for(let boid of boids) {
       let totalVisible = 0,
-        closePos = [0, 0],
-        visiblePos = [0, 0],
-        visibleVel = [0, 0];
+        closePosX = 0,
+        closePosY = 0,
+        visiblePosX = 0,
+        visiblePosY = 0,
+        visibleVelX = 0,
+        visibleVelY = 0;
 
       for(let other of boids) {
         if (boid === other)
           continue;
 
-        let diffX = Math.abs(boid.position.x - other.position.x),
-          diffY = Math.abs(boid.position.y - other.position.y)
+        const diffX = boid.position.x - other.position.x,
+          diffY = boid.position.y - other.position.y,
+          distSquared = diffX * diffX + diffY * diffY;
 
-        if (diffX > visualRange || diffY > visualRange)
-          continue;
-
-        let distSquared = diffX * diffX + diffY * diffY;
         if (distSquared < protectedRangeSquared) {
-          closePos[0] += boid.position.x - other.position.x;
-          closePos[1] += boid.position.y - other.position.y;
+          closePosX += boid.position.x - other.position.x;
+          closePosY += boid.position.y - other.position.y;
         } else if (distSquared < visualRageSquared) {
-          visiblePos[0] += other.position.x;
-          visiblePos[1] += other.position.y;
+          visiblePosX += other.position.x;
+          visiblePosY += other.position.y;
 
-          visibleVel[0] += other.velocity.x;
-          visibleVel[1] += other.velocity.y;
+          visibleVelX += other.velocity.x;
+          visibleVelY += other.velocity.y;
 
           totalVisible += 1;
         }
       }
 
       if (totalVisible > 0) {
-        visiblePos[0] = visiblePos[0] / totalVisible;
-        visiblePos[1] = visiblePos[1] / totalVisible;
+        visiblePosX = visiblePosX / totalVisible;
+        visiblePosY = visiblePosY / totalVisible;
   
-        visibleVel[0] = visibleVel[0] / totalVisible;
-        visibleVel[1] = visibleVel[1] / totalVisible;
+        visibleVelX = visibleVelX / totalVisible;
+        visibleVelY = visibleVelY / totalVisible;
   
-        boid.velocity.x += (visiblePos[0] - boid.position.x) * centeringFactor + (visibleVel[0] - boid.velocity.x) * matchingFactor;
-        boid.velocity.y += (visiblePos[1] - boid.position.y) * centeringFactor + (visibleVel[1] - boid.velocity.y) * matchingFactor;
+        boid.velocity.x += (visiblePosX - boid.position.x) * centeringFactor + (visibleVelX - boid.velocity.x) * matchingFactor;
+        boid.velocity.y += (visiblePosY - boid.position.y) * centeringFactor + (visibleVelY - boid.velocity.y) * matchingFactor;
   
-        boid.velocity.x += closePos[0] * avoidFactor;
-        boid.velocity.y += closePos[1] * avoidFactor;
+        boid.velocity.x += closePosX * avoidFactor;
+        boid.velocity.y += closePosY * avoidFactor;
       }
 
-      if (boid.position.x < 20)
+      if (boid.position.x < 0)
         boid.velocity.x += turningFactor;
-      else if (boid.position.x > maxX - 20)
+      else if (boid.position.x > maxX)
         boid.velocity.x -= turningFactor;
 
-      if (boid.position.y < 20)
+      if (boid.position.y < 0)
         boid.velocity.y += turningFactor;
-      else if (boid.position.y > maxY - 20)
+      else if (boid.position.y > maxY)
         boid.velocity.y -= turningFactor;
 
       let speed = Math.sqrt(boid.velocity.x * boid.velocity.x + boid.velocity.y * boid.velocity.y);

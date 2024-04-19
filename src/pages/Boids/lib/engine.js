@@ -16,7 +16,7 @@ export default class Engine {
 
     #draw(boid) {
       this.#context.beginPath();
-      this.#context.arc(boid.position.x, boid.position.y, 8, 0, 2 * Math.PI, false);
+      this.#context.arc(boid.position.x, boid.position.y, 2, 0, 2 * Math.PI, false);
       this.#context.fillStyle = 'white';
       this.#context.fill();
     }

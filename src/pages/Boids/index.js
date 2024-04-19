@@ -9,7 +9,7 @@ export default function ()  {
   onMount(() => {
     engine = new Engine(canvas);
 
-    for(let i = 0; i < 512; i++)
+    for(let i = 0; i < 1024; i++)
       engine.add({});
 
     engine.start();
