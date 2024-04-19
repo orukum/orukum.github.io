@@ -1,5 +1,23 @@
-import WIP from 'Pages/WIP';
+import './index.less';
+import { onMount, onCleanup } from 'solid-js';
+import Engine from './lib/engine';
 
-export default function() {
-  return <WIP start="4/17/2024" />
-}
+export default function ()  {
+  let canvas,
+    engine;
+
+  onMount(() => {
+    engine = new Engine(canvas);
+
+    for(let i = 0; i < 512; i++)
+      engine.add({});
+
+    engine.start();
+  });
+
+  onCleanup(() => {
+    engine.destroy();
+  });
+
+  return <canvas class="boids" ref={canvas}></canvas>;
+};

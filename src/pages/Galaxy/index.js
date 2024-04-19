@@ -47,5 +47,5 @@ export default function ()  {
     engine.destroy();
   });
 
-  return <canvas ref={element}></canvas>;
+  return <canvas class="galaxy" ref={element}></canvas>;
 };
